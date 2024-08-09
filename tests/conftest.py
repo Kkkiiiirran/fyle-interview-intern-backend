@@ -24,8 +24,8 @@ def h_student_1():
 def h_student_2():
     headers = {
         'X-Principal': json.dumps({
-            'student_id': 2,
-            'user_id': 2
+            'student_id': 10,
+            'user_id': 10
         })
     }
 

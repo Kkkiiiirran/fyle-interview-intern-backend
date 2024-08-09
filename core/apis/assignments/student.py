@@ -31,6 +31,23 @@ def upsert_assignment(p, incoming_payload):
     return APIResponse.respond(data=upserted_assignment_dump)
 
 
+@student_assignments_resources.route('/assignments', methods=['DELETE'], strict_slashes=False)
+@decorators.authenticate_principal
+def delete_all_assignments(p):
+    """Delete all assignments"""
+    # Check if the user is authorized to perform this action, e.g., an admin or specific role
+    if not p.is_admin:  # Assuming p.is_admin is a flag indicating admin privileges
+        return APIResponse.respond(data={'error': 'Unauthorized access'}, status_code=403)
+
+    # Query to delete all assignments
+    try:
+        Assignment.query.delete()
+        db.session.commit()
+        return APIResponse.respond(data={'message': 'All assignments have been deleted'})
+    except Exception as e:
+        db.session.rollback()  # Rollback the transaction in case of an error
+        return APIResponse.respond(data={'error': 'Failed to delete assignments', 'details': str(e)}, status_code=500)
+
 @student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
